@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+    <title>教务巡课系统</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+    <div class="container mx-auto p-8">
+        <h1 class="text-3xl font-bold text-center mb-8">教务巡课系统</h1>
+        <div class="bg-white p-8 rounded shadow-md">
+            <h2 class="text-xl font-bold mb-4">填写巡课信息</h2>
+            <form id="inspectionForm">
+                <div class="mb-4">
+                    <label for="inspector" class="block text-gray-700 text-sm font-bold mb-2">巡课人</label>
+                    <input type="text" id="inspector" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+                <div class="mb-4">
+                    <label for="inspectionTime" class="block text-gray-700 text-sm font-bold mb-2">巡课时间</label>
+                    <input type="datetime-local" id="inspectionTime" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+                <div class="mb-4">
+                    <label for="inspectionSituation" class="block text-gray-700 text-sm font-bold mb-2">巡视情况</label>
+                    <textarea id="inspectionSituation" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" rows="4" required></textarea>
+                </div>
+                <div class="mb-4">
+                    <label for="inspectionImage" class="block text-gray-700 text-sm font-bold mb-2">附带图片</label>
+                    <input type="file" id="inspectionImage" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                </div>
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">提交</button>
+            </form>
+            <div id="successMessage" class="hidden mt-4 text-green-500">提交成功！</div>
+        </div>
+        <div class="mt-8 bg-white p-8 rounded shadow-md">
+            <h2 class="text-xl font-bold mb-4">历史巡课记录</h2>
+            <table id="historyTable" class="w-full table-auto">
+                <thead>
+                    <tr>
+                        <th class="px-4 py-2">巡课人</th>
+                        <th class="px-4 py-2">巡课时间</th>
+                        <th class="px-4 py-2">巡视情况</th>
+                        <th class="px-4 py-2">图片</th>
+                        <th class="px-4 py-2">操作</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        document.getElementById('inspectionForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const inspector = document.getElementById('inspector').value;
+            const inspectionTime = document.getElementById('inspectionTime').value;
+            const inspectionSituation = document.getElementById('inspectionSituation').value;
+            const inspectionImage = document.getElementById('inspectionImage').files[0];
+
+            const tableBody = document.getElementById('historyTable').getElementsByTagName('tbody')[0];
+            const newRow = tableBody.insertRow();
+
+            const inspectorCell = newRow.insertCell(0);
+            inspectorCell.textContent = inspector;
+
+            const timeCell = newRow.insertCell(1);
+            timeCell.textContent = inspectionTime;
+
+            const situationCell = newRow.insertCell(2);
+            situationCell.textContent = inspectionSituation;
+
+            const imageCell = newRow.insertCell(3);
+            if (inspectionImage) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.style.maxWidth = '100px';
+                    imageCell.appendChild(img);
+                };
+                reader.readAsDataURL(inspectionImage);
+            } else {
+                imageCell.textContent = '无';
+            }
+
+            const actionCell = newRow.insertCell(4);
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = '删除';
+            deleteButton.classList.add('bg-red-500', 'hover:bg-red-700', 'text-white', 'font-bold', 'py-1', 'px-2', 'rounded', 'focus:outline-none', 'focus:shadow-outline');
+            deleteButton.addEventListener('click', function () {
+                tableBody.removeChild(newRow);
+            });
+            actionCell.appendChild(deleteButton);
+
+            document.getElementById('successMessage').classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('successMessage').classList.add('hidden');
+            }, 3000);
+
+            this.reset();
+        });
+    </script>
+</body>
+
+</html>
+    
